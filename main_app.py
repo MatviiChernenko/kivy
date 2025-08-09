@@ -105,7 +105,7 @@ class InputPulseSecond(Screen):
         layout_second_result.add_widget(third_result_label)
         layout_second_result.add_widget(self.third_result)
 
-        main_layout = BoxLayout(orientation = "vertical")
+        main_layout = BoxLayout(orientation = "vertical",spacing=100)
         main_layout.add_widget(text)
         main_layout.add_widget(layout_first_result)
         main_layout.add_widget(layout_second_result)
