@@ -38,23 +38,46 @@ txt_res.append('''Висока''')
 
 def ruffier_index(P1, P2, P3):
     ''' повертає значення індексу за трьома показниками пульсу для звірки з таблицею'''
-    pass
+    S = 4 * (P1 + P2 + P3)
+    IR = (S - 200) / 10
+    return IR
 
 def neud_level(age):
     ''' варіанти з віком менше 7 і дорослим треба обробляти окремо,
      тут підбираємо рівень "незадовільно" тільки всередині таблиці:
      у віці 7 років "незад" - це індекс 21, далі кожні 2 роки він знижується на 1.5 до значення 15 в 15-16 років '''
-    pass
+    if age >= 7 and age <= 8:
+        return 0
+    elif age >= 9 and age <= 10:
+        return 1
+    elif age >= 11 and age <= 12:
+        return 2
+    elif age >= 13 and age <= 14:
+        return 3
+    elif age >= 15:
+        return 4
     
 def ruffier_result(r_index, level):
     ''' функція отримує індекс Руф'є та інтерпретує його,
      повертає рівень готовності: число від 0 до 4
      (що вище рівень готовності, то краще).  '''
-    pass
+    if r_index > 21 - level * 1.5:
+        return 0
+    if r_index > 17 - level * 1.5:
+        return 1
+    if r_index > 12 - level * 1.5:
+        return 2
+    if r_index > 6.5 - level * 1.5:
+        return 3
+    if r_index > 6.4 - level * 1.5:
+        return 4
 
 def test(P1, P2, P3, age):
     ''' цю функцію можна використовувати зовні модуля для підрахунків індексу Руф'є.
      Повертає готові тексти, які залишається намалювати у потрібному місці
      Використовує для текстів константи, задані на початку цього модуля. '''
-    pass
+    RI = ruffier_index(P1,P2,P3)
+    level = neud_level(age)
+    index = ruffier_result(RI,level)
+    return txt_res[index]
 
