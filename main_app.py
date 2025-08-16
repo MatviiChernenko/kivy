@@ -6,6 +6,14 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 import instructions
+from ruffier import txt_nodata
+import seconds 
+
+def check_int(value):
+    try:
+        return int(value)
+    except:
+        return False
 
 class MainWindow(Screen):
     def __init__(self,**kwargs):
@@ -37,17 +45,26 @@ class MainWindow(Screen):
 
 
     def next(self):
+        age_result = self.age.text
         self.manager.current = "first_pulse"
+        if age_result <= "6":
+            self.manager.current = "else_result"
+
 
 class InputPulseFirst(Screen):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
 
         text = Label(text=instructions.txt_test1)
+        self.timer = seconds.Seconds(1)
+        self.timer.bind(done = self.sec_finish)
+        self.next_screen = False
 
         result_label = Label(text="Введіть результат")
         self.first_result = TextInput(multiline =False )
-        self.button = Button(text="Продовжити")
+        self.first_result.set_disabled(True)
+        
+        self.button = Button(text="Почати")
         self.button.on_press = self.next
 
         layout_result = BoxLayout()
@@ -57,14 +74,30 @@ class InputPulseFirst(Screen):
 
         main_layout = BoxLayout(orientation = "vertical")
         main_layout.add_widget(text)
+        main_layout.add_widget(self.timer)
         main_layout.add_widget(layout_result)
         main_layout.add_widget(self.button)
         self.add_widget(main_layout)
 
+
     def next(self):
-        global first_result
-        first_result = self.first_result.text
-        self.manager.current = "sits"
+        if self.next_screen == False:
+            self.button.set_disabled(True)
+            self.timer.start()
+        else:
+            global first_result
+            first_result = check_int(self.first_result.text)
+            if first_result == False or first_result < 0:
+                self.first_result.text = "0"
+            else:
+                self.manager.current = "sits"
+
+
+    def sec_finish(self,*arg):
+        self.next_screen = True
+        self.first_result.set_disabled(False)
+        self.button.set_disabled(False)
+        self.button.text = "Продовжити"
 
 class SitsWindow(Screen):
     def __init__(self,**kwargs):
@@ -72,7 +105,7 @@ class SitsWindow(Screen):
 
         text = Label(text=instructions.txt_sits)
 
-        self.button = Button(text="Продовжити")
+        self.button = Button(text="Почати")
         self.button.on_press = self.next
 
         main_layout = BoxLayout(orientation = "vertical")
@@ -83,6 +116,7 @@ class SitsWindow(Screen):
 
 
     def next(self):
+        
         self.manager.current = "second_pulse"
 
 class InputPulseSecond(Screen):
@@ -132,6 +166,17 @@ class Result(Screen):
     def before(self):
         self.result.text = f"{first_result} {second_result} {third_result}"
 
+class Else_Result(Screen):
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+
+        self.result = Label()
+        self.on_enter = self.before
+        self.add_widget(self.result)
+
+    def before(self):
+        self.result.text = f"{txt_nodata}"
+
 class Ruffier(App):
     def build (self):
         sm = ScreenManager()
@@ -140,7 +185,7 @@ class Ruffier(App):
         sm.add_widget(SitsWindow(name = "sits"))
         sm.add_widget(InputPulseSecond(name = "second_pulse"))
         sm.add_widget(Result(name = "result"))
-
+        sm.add_widget(Else_Result(name = "else_result"))
         return sm
     
 ruffier = Ruffier()
