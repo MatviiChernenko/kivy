@@ -6,7 +6,7 @@ from kivy.properties import NumericProperty,BooleanProperty
 
 class Runner(BoxLayout):
     value = NumericProperty(0)
-    finish = BooleanProperty(False)
+    finished = BooleanProperty(False)
 
     def __init__(self,total,**kwargs):
         self.total = total

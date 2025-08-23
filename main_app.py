@@ -8,6 +8,8 @@ from kivy.uix.textinput import TextInput
 import instructions
 from ruffier import txt_nodata
 import seconds 
+import sits
+import runner
 
 def check_int(value):
     try:
@@ -56,7 +58,7 @@ class InputPulseFirst(Screen):
         super().__init__(**kwargs)
 
         text = Label(text=instructions.txt_test1)
-        self.timer = seconds.Seconds(1)
+        self.timer = seconds.Seconds(5)
         self.timer.bind(done = self.sec_finish)
         self.next_screen = False
 
@@ -104,20 +106,32 @@ class SitsWindow(Screen):
         super().__init__(**kwargs)
 
         text = Label(text=instructions.txt_sits)
+        self.timer = sits.Sits(5) 
+        self.timer.bind(done = self.sec_finish)
+        self.next_screen = False
 
         self.button = Button(text="Почати")
         self.button.on_press = self.next
 
         main_layout = BoxLayout(orientation = "vertical")
         main_layout.add_widget(text)
+        main_layout.add_widget(self.timer)
         main_layout.add_widget(self.button)
         self.add_widget(main_layout)
 
 
 
     def next(self):
-        
-        self.manager.current = "second_pulse"
+        if self.next_screen == False:
+            self.button.set_disabled(True)
+            self.timer.start()
+        else:
+            self.manager.current = "second_pulse"
+
+    def sec_finish(self,*arg):
+        self.next_screen = True
+        self.button.set_disabled(False)
+        self.button.text = "Продовжити"
 
 class InputPulseSecond(Screen):
     def __init__(self,**kwargs):
@@ -177,6 +191,8 @@ class Else_Result(Screen):
     def before(self):
         self.result.text = f"{txt_nodata}"
 
+
+
 class Ruffier(App):
     def build (self):
         sm = ScreenManager()
@@ -190,4 +206,3 @@ class Ruffier(App):
     
 ruffier = Ruffier()
 ruffier.run()
-        
